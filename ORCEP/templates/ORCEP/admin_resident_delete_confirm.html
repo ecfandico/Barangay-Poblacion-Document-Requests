@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Resident - Barangay Admin</title>
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin.css' %}">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <h1>Delete Resident Account</h1>
+            <div class="admin-info">
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <div class="nav-container">
+            <a href="{% url 'admin_statistics' %}" class="nav-item">Statistics</a>
+            <a href="{% url 'admin_resident_list' %}" class="nav-item active">Residents</a>
+            <a href="{% url 'admin_requests' %}" class="nav-item">Service Requests</a>
+            <a href="{% url 'admin_service_type_list' %}" class="nav-item">Service Types</a>
+            <a href="/" class="nav-item">View Main Site</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div style="max-width: 600px; margin: 2rem auto; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 2rem;">
+            <h2 style="color: #dc3545; margin-bottom: 1rem;">⚠️ Confirm Deletion</h2>
+            
+            <p>Are you sure you want to permanently delete the following user?</p>
+            
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin: 1rem 0;">
+                <p><strong>Name:</strong> {{ resident_user.get_full_name }}</p>
+                <p><strong>Email:</strong> {{ resident_user.email }}</p>
+                <p><strong>Username:</strong> {{ resident_user.username }}</p>
+                <p><strong>Service Requests:</strong> {{ service_requests_count }}</p>
+            </div>
+            
+            <div style="background: #fff3cd; padding: 1rem; border-radius: 4px; margin: 1rem 0; border-left: 4px solid #ffc107;">
+                <strong>Warning:</strong> This action cannot be undone. All user data will be permanently deleted.
+            </div>
+            
+            <form method="POST" action="{% url 'admin_resident_delete' resident_user.id %}" style="margin-top: 1rem;">
+                {% csrf_token %}
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <a href="{% url 'admin_resident_list' %}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-danger" style="background: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;">
+                        Yes, Delete Permanently
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,226 @@
+body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .header p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .navbar {
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .nav-links a {
+            margin-left: 1rem;
+            text-decoration: none;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+        
+        .nav-links a:hover {
+            background: #f0f0f0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .back-nav {
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-size: 0.875rem;
+            display: inline-block;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .qr-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .qr-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .qr-header h2 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+        }
+        
+        .qr-header p {
+            color: #666;
+            margin: 0;
+        }
+        
+        .qr-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .qr-code-display {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+        
+        .qr-image {
+            max-width: 100%;
+            border-radius: 8px;
+            padding: 1rem;
+            background: white;
+        }
+        
+        .qr-details {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .qr-details h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .detail-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .detail-item strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #555;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .status-badge.approved {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-badge.ready {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-badge.completed {
+            background: #c3e6cb;
+            color: #155724;
+        }
+        
+        .qr-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        .instructions ul {
+            margin: 0;
+            padding-left: 1.5rem;
+            color: #555;
+        }
+        
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .qr-content {
+                flex-direction: column;
+            }
+            
+            .qr-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }

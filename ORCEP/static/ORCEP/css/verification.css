@@ -1,0 +1,226 @@
+/* Verification Page Styles */
+.verification-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.verification-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.verification-header h1 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.verification-header p {
+    color: #7f8c8d;
+    font-size: 1.2rem;
+}
+
+.verification-card {
+    background: white;
+    border-radius: 12px;
+    padding: 3rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    text-align: center;
+    margin-bottom: 2rem;
+    flex-grow: 1;
+}
+
+.verification-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.verification-card h2 {
+    color: #27ae60;
+    margin-bottom: 2rem;
+}
+
+.document-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    text-align: left;
+}
+
+.document-info h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.info-item {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.status-badge.verified {
+    background: #d4edda;
+    color: #155724;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.verification-actions {
+    margin: 2rem 0;
+}
+
+.btn-large {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.help-text {
+    margin-top: 1rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.security-notice {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.security-notice h4 {
+    margin-top: 0;
+    color: #856404;
+}
+
+.footer {
+    text-align: center;
+    color: #6c757d;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #dee2e6;
+}
+
+/* QR Code Page Styles */
+.qr-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.qr-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.qr-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.qr-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.qr-code-display {
+    text-align: center;
+}
+
+.qr-image {
+    width: 250px;
+    height: 250px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    background: white;
+}
+
+.no-qr {
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.qr-details {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.verification-url {
+    background: #e9ecef;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-top: 0.25rem;
+    word-break: break-all;
+    font-family: monospace;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.copy-btn {
+    margin-left: 1rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+}
+
+.qr-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #ecf0f1;
+}
+
+.instructions {
+    background: #e3f2fd;
+    border-radius: 12px;
+    padding: 1.5rem;
+    border-left: 4px solid #2196f3;
+}
+
+.instructions h3 {
+    margin-top: 0;
+    color: #1565c0;
+}
+
+.instructions ol {
+    padding-left: 1.5rem;
+}
+
+.instructions li {
+    margin-bottom: 0.5rem;
+}
+
+.note {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-top: 1rem;
+}

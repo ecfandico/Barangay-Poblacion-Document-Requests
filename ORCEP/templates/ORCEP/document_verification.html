@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Verification - Barangay Población</title>
+    <link rel="stylesheet" href="{% static 'ORCEP/css/verification.css' %}">
+</head>
+<body>
+    <div class="verification-container">
+        <div class="verification-header">
+            <h1>Barangay Población</h1>
+            <p>Document Verification Portal</p>
+        </div>
+
+        <div class="verification-card">
+            <div class="verification-icon">✅</div>
+            <h2>Document Verified Successfully!</h2>
+            
+            <div class="document-info">
+                <h3>Document Details:</h3>
+                <div class="info-item">
+                    <strong>Document Type:</strong> {{ document_title }}
+                </div>
+                <div class="info-item">
+                    <strong>Resident Name:</strong> {{ resident_name }}
+                </div>
+                <div class="info-item">
+                    <strong>Request Date:</strong> {{ service_request.date_requested|date:"F d, Y" }}
+                </div>
+                <div class="info-item">
+                    <strong>Status:</strong> 
+                    <span class="status-badge verified">Verified & Ready</span>
+                </div>
+            </div>
+
+            <div class="verification-actions">
+                <a href="{% url 'download_document' service_request.verification_token %}" 
+                   class="btn btn-primary btn-large">
+                    Download Document
+                </a>
+                <p class="help-text">
+                    Click the button above to download your official document.
+                </p>
+            </div>
+
+            <div class="security-notice">
+                <h4>Security Notice:</h4>
+                <p>This verification is valid for one-time use. Please download your document immediately.</p>
+                <p><small>Token expires on: {{ service_request.token_expiry|date:"F d, Y" }}</small></p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Barangay Población Community Portal © 2025</p>
+            <p>Kidapawan City, North Cotabato</p>
+        </div>
+    </div>
+</body>
+</html>

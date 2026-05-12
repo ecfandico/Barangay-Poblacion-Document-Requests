@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Service - Barangay Población</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'ORCEP/css/service_request_form.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>Barangay Población</h1>
+        <p>Kidapawan City Online Request and Community Events Portal</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Barangay Portal</div>
+            <div class="nav-links">
+                <a href="{% url 'services_dashboard' %}" class="active">Services</a>
+                <a href="{% url 'user_dashboard' %}">Dashboard</a>
+                <a href="{% url 'home' %}">About</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'register' %}">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="form-container">
+            <!-- Service Header -->
+            <div class="form-header">
+                <h1>Request {{ service_type.name }}</h1>
+                <p>Please fill out the form below to request this service</p>
+            </div>
+            
+            <!-- Service Information -->
+            <div class="service-info">
+                <h3>📋 Service Details</h3>
+                <div class="service-details">
+                    <div class="detail-item">
+                        <strong>Description:</strong> {{ service_type.description }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Processing Time:</strong> {{ service_type.processing_days }} business days
+                    </div>
+                    <div class="detail-item">
+                        <strong>Fee:</strong> ₱{{ service_type.processing_fee }}
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3>👤 Personal Information</h3>
+                        <div class="section-icon">📝</div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="required">Full Name</label>
+                            <input type="text" value="{{ user.get_full_name }}" readonly class="readonly-field">
+                            <small>This is automatically filled from your profile</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="resident_age" class="required">Age</label>
+                            <input type="number" id="resident_age" name="resident_age" min="18" max="120" required 
+                                   placeholder="Enter your age">
+                            <small>Must be 18 years or older</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="resident_address" class="required">Complete Address</label>
+                        <textarea id="resident_address" name="resident_address" rows="3" 
+                                  placeholder="Street, Barangay Población, Kidapawan City" required></textarea>
+                        <small>Please provide your complete residential address</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="years_in_residence" class="required">Years in Residence</label>
+                            <input type="number" id="years_in_residence" name="years_in_residence" min="0" max="100" required 
+                                   placeholder="0">
+                            <small>Number of years living at this address</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="months_in_residence">Months in Residence</label>
+                            <input type="number" id="months_in_residence" name="months_in_residence" min="0" max="11"
+                                   placeholder="0">
+                            <small>Additional months (optional)</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Community Tax Certificate Information -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3>📄 Community Tax Certificate (CTC) Details</h3>
+                        <div class="section-icon">🏛️</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="community_tax_cert_no" class="required">Community Tax Certificate No.</label>
+                        <input type="text" id="community_tax_cert_no" name="community_tax_cert_no" required 
+                               placeholder="Enter CTC number">
+                        <small>Your Community Tax Certificate number</small>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ctc_issued_on" class="required">Issued On</label>
+                            <input type="date" id="ctc_issued_on" name="ctc_issued_on" required>
+                            <small>Date when CTC was issued</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ctc_issued_at" class="required">Issued At</label>
+                            <input type="text" id="ctc_issued_at" name="ctc_issued_at" 
+                                   placeholder="e.g., Barangay Población, Kidapawan City" required>
+                            <small>Place where CTC was issued</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="or_number" class="required">Official Receipt (O.R.) Number</label>
+                        <input type="text" id="or_number" name="or_number" required 
+                               placeholder="Enter O.R. number">
+                        <small>Official receipt number from payment</small>
+                    </div>
+                </div>
+
+                <!-- Add this section -->
+                <!-- Payment Proof Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3>💰 Payment Information</h3>
+                        <div class="section-icon">💳</div>
+                    </div>
+                    
+                    <div class="payment-notice" style="background: #e7f3ff; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <p><strong>Processing Fee: ₱{{ service_type.processing_fee }}</strong></p>
+                        <p>You can upload proof of payment now or later. Payment verification speeds up processing.</p>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="payment_proof">Proof of Payment (Optional)</label>
+                        <input type="file" id="payment_proof" name="payment_proof" 
+                               accept="image/*" class="file-input"
+                               style="padding: 0.5rem; border: 2px dashed #ddd; border-radius: 4px; width: 100%;">
+                        <small style="display: block; margin-top: 0.5rem; color: #666;">
+                            📸 Upload a photo of your payment receipt (JPG, PNG, JPEG). Max 5MB.
+                        </small>
+        
+                        <!-- Image Preview -->
+                        <div id="paymentPreview" style="display: none; margin-top: 1rem; text-align: center;">
+                            <img id="previewPaymentImage" src="#" alt="Payment Proof Preview" 
+                                 style="max-width: 300px; border: 2px solid #ddd; border-radius: 8px; padding: 5px;">
+                            <div style="margin-top: 0.5rem;">
+                                <button type="button" id="removePaymentImage" 
+                                        style="background: #dc3545; color: white; border: none; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer;">
+                                    Remove Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Purpose of Request -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3>🎯 Purpose of Request</h3>
+                        <div class="section-icon">📋</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="purpose" class="required">Purpose</label>
+                        <textarea id="purpose" name="purpose" rows="4" 
+                                  placeholder="Please specify the purpose of this clearance (e.g., For employment, for business permit, for school requirements, etc.)" 
+                                  required></textarea>
+                        <small>Be specific about how you will use this document</small>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-icon">📨</span>
+                        Submit Request
+                    </button>
+                    <a href="{% url 'services_dashboard' %}" class="btn btn-secondary">
+                        <span class="btn-icon">←</span>
+                        Back to Services
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Barangay Población Community Portal © 2025</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">Kidapawan City, North Cotabato</p>
+    </footer>
+<script src="{% static 'ORCEP/javascript/service_request_form.js' %}"></script>
+</body>
+</html>

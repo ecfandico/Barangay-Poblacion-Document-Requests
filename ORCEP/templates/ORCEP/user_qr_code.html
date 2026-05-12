@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code - Barangay Población</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'ORCEP/css/user_qr_code.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>Barangay Población</h1>
+        <p>Kidapawan City Online Request and Community Events Portal</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Barangay Portal</div>
+            <div class="nav-links">
+                <a href="{% url 'services_dashboard' %}">Services</a>
+                <a href="{% url 'user_dashboard' %}">Dashboard</a>
+                <a href="{% url 'home' %}">About</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="back-nav">
+            <a href="{% url 'user_dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+        </div>
+
+        <div class="qr-card">
+            <div class="qr-header">
+                <h2>QR Code for {{ service_request.service_type.name }}</h2>
+                <p>Scan this QR code to verify your document</p>
+            </div>
+
+            <div class="qr-content">
+                <!-- QR Code Display -->
+                <div class="qr-code-display">
+                    {% if service_request.qr_code %}
+                        <img src="{{ service_request.qr_code.url }}" 
+                             alt="QR Code" 
+                             class="qr-image">
+                        <p style="margin-top: 1rem; color: #666; font-size: 0.9rem;">
+                            Size: 300x300 pixels
+                        </p>
+                    {% else %}
+                        <div class="no-qr" style="text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 8px;">
+                            <p style="color: #856404; margin: 0;">QR Code not generated yet.</p>
+                            <p style="color: #666; font-size: 0.9rem; margin-top: 0.5rem;">
+                                Please contact barangay admin if you need a QR code.
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Request Details -->
+                <div class="qr-details">
+                    <h3>Document Information</h3>
+                    <div class="detail-item">
+                        <strong>Document Type:</strong> {{ service_request.service_type.name }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Resident Name:</strong> {{ service_request.resident.get_full_name }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Request ID:</strong> #{{ service_request.id }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Status:</strong> 
+                        <span class="status-badge {{ service_request.status }}">
+                            {{ service_request.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Request Date:</strong> {{ service_request.date_requested|date:"F d, Y" }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Verification URL:</strong>
+                        <div style="margin-top: 0.5rem; background: #f8f9fa; padding: 0.5rem; border-radius: 4px; font-family: monospace; font-size: 0.8rem; word-break: break-all;">
+                            {{ full_verification_url }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="qr-actions">
+                {% if service_request.qr_code %}
+                    <a href="{{ service_request.qr_code.url }}" download="qr_code_{{ service_request.id }}.png" class="btn btn-primary">
+                        📥 Download QR Code
+                    </a>
+                {% endif %}
+                {% if service_request.status in 'approved,ready,completed' %}
+                    <a href="{% url 'generate_clearance' service_request.id %}" class="btn btn-primary">
+                        📄 Download Document
+                    </a>
+                {% endif %}
+                <a href="{% url 'user_dashboard' %}" class="btn btn-secondary">
+                    ← Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Instructions -->
+            <div class="instructions">
+                <h3>How to Use This QR Code:</h3>
+                <ul>
+                    <li><strong>For Verification:</strong> Show this QR code to barangay officials</li>
+                    <li><strong>For Scanning:</strong> Use any smartphone camera or QR scanner app</li>
+                    <li><strong>For Download:</strong> Save the QR code image to your device</li>
+                    <li><strong>For Sharing:</strong> You can share the downloaded image</li>
+                </ul>
+                <p style="margin-top: 1rem; color: #666; font-size: 0.9rem;">
+                    <strong>Note:</strong> This QR code contains a unique verification token that expires on 
+                    {{ service_request.token_expiry|date:"F d, Y"|default:"a future date" }}.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Barangay Población Community Portal © 2025</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">Kidapawan City, North Cotabato</p>
+    </footer>
+</body>
+</html>

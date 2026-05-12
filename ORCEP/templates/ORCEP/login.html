@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Barangay Población</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'ORCEP/css/login.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>Barangay Población</h1>
+        <p>Kidapawan City Online Request and Community Events Portal</p>
+    </header>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Barangay Portal</div>
+            <div class="nav-links">
+                <a href="{% url 'services_dashboard' %}">Services</a>
+                <a href="{% url 'home' %}">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="form-card">
+            <!-- Form Header -->
+            <div class="form-header">
+                <h2>Login to Barangay Portal</h2>
+                <p>Access your account to request services and view events</p>
+            </div>
+
+            <!-- Display messages -->
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Show special message if user was redirected here -->
+            {% if request.GET.next %}
+            <div class="info-message">
+                <div class="info-icon">🔒</div>
+                <div class="info-text">
+                    <strong>Authentication Required</strong>
+                    <p>Please login to access Barangay services and features.</p>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Login Form -->
+            <form method="POST" class="auth-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="email" class="required">Email Address</label>
+                    <div class="input-with-icon">
+                        <input type="email" id="email" name="email" required 
+                               placeholder="Enter your email address">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="required">Password</label>
+                    <div class="input-with-icon">
+                        <input type="password" id="password" name="password" required 
+                               placeholder="Enter your password">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">
+                    Login to Account
+                </button>
+            </form>
+
+            <!-- Register Link -->
+            <div class="auth-link">
+                <p>Don't have an account? <a href="{% url 'register' %}">Create one here</a></p>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="quick-links">
+                <a href="{% url 'home' %}" class="back-link">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Barangay Población Community Portal © 2025</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">Kidapawan City, North Cotabato</p>
+    </footer>
+</body>
+</html>

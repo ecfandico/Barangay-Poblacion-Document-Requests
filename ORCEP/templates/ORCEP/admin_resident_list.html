@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resident Management - Barangay Admin</title>
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin.css' %}">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <h1>Resident Management</h1>
+            <div class="admin-info">
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <div class="nav-container">
+            <a href="{% url 'admin_statistics' %}" class="nav-item">Statistics</a>
+            <a href="{% url 'admin_resident_list' %}" class="nav-item active">Residents</a>
+            <a href="{% url 'admin_requests' %}" class="nav-item">Service Requests</a>
+            <a href="{% url 'admin_service_type_list' %}" class="nav-item">Service Types</a>
+            <a href="/" class="nav-item">View Main Site</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2>Registered Residents</h2>
+            <div class="header-actions">
+                <span class="resident-count">{{ residents.count }} residents</span>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <form method="GET" class="filter-form">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="search">Search Residents:</label>
+                        <input type="text" id="search" name="search" 
+                               value="{{ search_query }}" placeholder="Search by name or email...">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="verification">Verification Status:</label>
+                        <select id="verification" name="verification">
+                            <option value="">All Status</option>
+                            <option value="pending" {% if verification_filter == 'pending' %}selected{% endif %}>
+                                Pending Review
+                            </option>
+                            <option value="approved" {% if verification_filter == 'approved' %}selected{% endif %}>
+                                Approved
+                            </option>
+                            <option value="rejected" {% if verification_filter == 'rejected' %}selected{% endif %}>
+                                Rejected
+                            </option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                        <a href="{% url 'admin_resident_list' %}" class="btn btn-secondary">Clear</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Residents Table -->
+        <div class="residents-table-container">
+            {% if residents %}
+            <table class="residents-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Age/Gender</th>
+                        <th>Address</th>
+                        <th>Verification Status</th>
+                        <th>Date Registered</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for resident in residents %}
+                    {% with profile=resident.residentprofile %}
+                    <tr>
+                        <td>
+                            <strong>{{ resident.get_full_name }}</strong>
+                            <br>
+                            <small>ID: {{ resident.id }}</small>
+                        </td>
+                        <td>{{ resident.email }}</td>
+                        <td>
+                            {{ profile.age|default:"N/A" }}
+                            {% if profile.gender %}/ {{ profile.get_gender_display }}{% endif %}
+                        </td>
+                        <td class="address-cell">
+                            {{ profile.address|default:"Not provided"|truncatewords:5 }}
+                        </td>
+                        <td>
+                            {% if profile.verification_status == 'approved' %}
+                                <span class="status-badge approved">Approved</span>
+                            {% elif profile.verification_status == 'rejected' %}
+                                <span class="status-badge rejected">Rejected</span>
+                            {% else %}
+                                <span class="status-badge pending">Pending</span>
+                            {% endif %}
+                            {% if profile.verified_by %}
+                                <br><small>By: {{ profile.verified_by.get_full_name }}</small>
+                            {% endif %}
+                        </td>
+                        <td>{{ resident.date_joined|date:"M d, Y" }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a style="background: #3498db; color: white;" href="{% url 'admin_resident_detail' resident.id %}" 
+                                   class="btn btn-sm btn-primary">View Details</a>
+                                
+                                {% if profile.verification_status != 'approved' %}
+                                <a href="{% url 'admin_resident_verify' resident.id 'approve' %}" 
+                                   class="btn btn-sm btn-success">Approve</a>
+                                {% endif %}
+                                
+                                {% if profile.verification_status != 'rejected' %}
+                                <a href="{% url 'admin_resident_verify' resident.id 'reject' %}" 
+                                   class="btn btn-sm btn-danger">Reject</a>
+                                {% endif %}
+
+                                <a href="{% url 'admin_resident_delete' resident.id %}" 
+                                   class="btn btn-sm btn-danger" 
+                                   style="background: #dc3545; color: white; text-decoration: none; display: inline-block; padding: 0.25rem 0.5rem; border-radius: 4px;">
+                                   Remove
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endwith %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-residents">
+                <p>No residents found matching your criteria.</p>
+                <a href="{% url 'admin_resident_list' %}" class="btn btn-primary">View All Residents</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

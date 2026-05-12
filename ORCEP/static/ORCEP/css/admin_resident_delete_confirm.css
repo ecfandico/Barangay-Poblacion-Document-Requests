@@ -1,0 +1,103 @@
+.confirmation-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+        
+.confirmation-header {
+    background: #dc3545;
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+}
+        
+.confirmation-header .warning-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+}
+        
+.confirmation-body {
+    padding: 2rem;
+}
+        
+.user-details {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+        
+.user-details p {
+    margin: 0.5rem 0;
+}
+        
+.warning-message {
+    background: #fff3cd;
+    border: 1px solid #ffecb5;
+    color: #856404;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+        
+.confirmation-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+        
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-size: 0.875rem;
+    display: inline-block;
+}
+        
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+        
+.btn-danger:hover {
+    background: #c82333;
+}
+        
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+        
+.stats {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+        
+.stat {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem;
+    background: #e9ecef;
+    border-radius: 4px;
+}
+        
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #495057;
+}
+        
+.stat-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+}

@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics Dashboard - Barangay Admin</title>
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin_statistics.css' %}">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <h1>Statistics Dashboard</h1>
+            <div class="admin-info">
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <div class="nav-container">
+            <a href="{% url 'admin_statistics' %}" class="nav-item active">Statistics</a>
+            <a href="{% url 'admin_resident_list' %}" class="nav-item">Residents</a>
+            <a href="{% url 'admin_requests' %}" class="nav-item">Service Requests</a>
+            <a href="{% url 'admin_service_type_list' %}" class="nav-item">Service Types</a>
+            <a href="/" class="nav-item">View Main Site</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Quick Stats -->
+        <div class="stats-container">
+            <div class="stat-card-lg">
+                <div class="stat-number-lg">{{ total_requests }}</div>
+                <div class="stat-label-lg">Total Requests</div>
+            </div>
+            
+            <div class="stat-card-lg">
+                <div class="stat-number-lg">₱{{ total_revenue|floatformat:2 }}</div>
+                <div class="stat-label-lg">Total Revenue</div>
+            </div>
+            
+            <div class="stat-card-lg">
+                <div class="stat-number-lg">{{ today_requests }}</div>
+                <div class="stat-label-lg">Today's Requests</div>
+            </div>
+            
+            <div class="stat-card-lg">
+                <div class="stat-number-lg">{{ week_requests }}</div>
+                <div class="stat-label-lg">This Week's Requests</div>
+            </div>
+        </div>
+
+        <!-- Current Month Highlight -->
+        <div class="stat-card-lg" style="margin-bottom: 2rem;">
+            <h3>Current Month: {{ current_month|date:"F Y" }}</h3>
+            <div class="stats-container" style="margin-top: 1rem;">
+                <div class="stat-card-lg" style="margin: 0;">
+                    <div class="stat-number-lg">{{ current_stats.total_requests }}</div>
+                    <div class="stat-label-lg">Total Requests</div>
+                </div>
+                
+                <div class="stat-card-lg" style="margin: 0;">
+                    <div class="stat-number-lg">{{ current_stats.approved_requests }}</div>
+                    <div class="stat-label-lg">Approved</div>
+                </div>
+                
+                <div class="stat-card-lg" style="margin: 0;">
+                    <div class="stat-number-lg">{{ current_stats.completed_requests }}</div>
+                    <div class="stat-label-lg">Completed</div>
+                </div>
+                
+                <div class="stat-card-lg" style="margin: 0;">
+                    <div class="stat-number-lg">₱{{ current_stats.total_revenue|floatformat:2 }}</div>
+                    <div class="stat-label-lg">Monthly Revenue</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Statistics Table with Action Buttons -->
+        <div class="monthly-table">
+            <h3 style="padding: 1rem; margin: 0; background: #f8f9fa;">Monthly Statistics (Last 12 Months)</h3>
+            {% if monthly_stats %}
+            <div style="overflow-x: auto;">
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Total Requests</th>
+                            <th>Approved</th>
+                            <th>Completed</th>
+                            <th>Pending</th>
+                            <th>Revenue</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for stat in monthly_stats %}
+                        <tr {% if stat.year == current_year and stat.month == current_month %}style="background: #e7f3ff;"{% endif %}>
+                            <td><strong>{{ stat.year }}-{{ stat.month|stringformat:"02d" }}</strong></td>
+                            <td>{{ stat.total_requests }}</td>
+                            <td>{{ stat.approved_requests }}</td>
+                            <td>{{ stat.completed_requests }}</td>
+                            <td>{{ stat.pending_requests }}</td>
+                            <td>₱{{ stat.total_revenue|floatformat:2 }}</td>
+                            <td class="action-cell">
+                                <!-- View Details Button -->
+                                <a href="{% url 'admin_monthly_requests_view' stat.year stat.month %}" 
+                                   class="btn-sm btn-info" 
+                                   style="padding: 0.25rem 0.5rem; text-decoration: none; border-radius: 4px; display: inline-block;">
+                                    View Details
+                                </a>
+                                
+                                <!-- Download Report Button -->
+                                <a href="{% url 'admin_monthly_report_pdf' stat.year stat.month %}" 
+                                   class="btn-sm btn-success" 
+                                   style="padding: 0.25rem 0.5rem; text-decoration: none; border-radius: 4px; display: inline-block;">
+                                    Generate Document
+                                </a>
+                                
+                                <!-- Delete Button -->
+                                <button class="btn-sm delete-btn delete-stat-btn" 
+                                        data-year="{{ stat.year }}"
+                                        data-month="{{ stat.month }}"
+                                        data-yearmonth="{{ stat.year }}-{{ stat.month|stringformat:'02d' }}"
+                                        style="background: #dc3545; color: white; border: none; cursor: pointer; padding: 0.25rem 0.5rem; border-radius: 4px;">
+                                    Remove
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-data" style="padding: 2rem; text-align: center;">
+                <p>No monthly statistics available yet.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Popular Services -->
+        <div style="background: white; border-radius: 8px; padding: 1.5rem; margin-top: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3>Most Requested Services</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                {% for service in popular_services %}
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">{{ service.name }}</div>
+                    <div style="font-size: 1.5rem; color: #667eea; font-weight: bold;">{{ service.request_count }} requests</div>
+                    <small>₱{{ service.processing_fee }} each</small>
+                </div>
+                {% empty %}
+                <div>No service request data available.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+<script src="{% static 'ORCEP/js/admin_statistics.js' %}"></script>
+</body>
+</html>

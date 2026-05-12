@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - Barangay Población</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'ORCEP/css/services_dashboard.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>Barangay Población</h1>
+        <p>Kidapawan City Online Request and Community Events Portal</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Barangay Portal</div>
+            <div class="nav-links">
+                <a href="{% url 'services_dashboard' %}" class="active">Services</a>
+                <a href="{% url 'user_dashboard' %}">Dashboard</a>
+                <a href="{% url 'home' %}">About</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Login</a>
+                    <a href="{% url 'register' %}">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Page Title -->
+        <div class="page-title">
+            <h2>Barangay Services</h2>
+            <p>Access and request various barangay services online</p>
+        </div>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <h3 class="search-title">Find Services</h3>
+            <form method="GET" action="">
+                <div class="search-grid">
+                    <!-- Search for Service -->
+                    <div class="search-group">
+                        <label for="search-service">Search for service</label>
+                        <input type="text" id="search-service" name="search_service" class="search-input" 
+                               placeholder="Enter service name...">
+                    </div>
+
+                    <!-- Search by Category -->
+                    <div class="search-group">
+                        <label for="search-category">Search by category</label>
+                        <select id="search-category" name="search_category" class="search-input">
+                            <option value="">Select category...</option>
+                            <option value="document">Document Requests</option>
+                            <option value="permit">Permits & Licenses</option>
+                            <option value="health">Health Services</option>
+                            <option value="social">Social Services</option>
+                        </select>
+                    </div>
+
+                    <!-- Search by Processing Time -->
+                    <div class="search-group">
+                        <label for="search-processing">Processing time</label>
+                        <select id="search-processing" name="search_processing" class="search-input">
+                            <option value="">Select processing time...</option>
+                            <option value="1">1-3 days</option>
+                            <option value="2">3-7 days</option>
+                            <option value="3">1-2 weeks</option>
+                            <option value="4">More than 2 weeks</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="search-actions">
+                    <button type="submit" class="btn btn-primary">🔍 Search Services</button>
+                    <a href="{% url 'services_dashboard' %}" class="btn btn-secondary">🔄 Clear All</a>
+                </div>
+            </form>
+        </section>
+
+        <!-- Available Services Section -->
+        <section class="services-section">
+            <div class="section-header">
+                <h3>Available Services</h3>
+                <span class="services-count">{{ available_services|length }} Services</span>
+            </div>
+
+            {% if available_services %}
+            <div class="services-grid">
+                {% for service in available_services %}
+                <div class="service-card">
+                    <div class="service-header">
+                        <span class="service-category">Document Service</span>
+                        <h4 class="service-title">{{ service.name }}</h4>
+                    </div>
+                    <div class="service-body">
+                        <div class="service-meta">
+                            <div class="meta-item">
+                                ⏱️ {{ service.processing_days }} business days
+                            </div>
+                            <div class="meta-item">
+                                💰 ₱{{ service.processing_fee }}
+                            </div>
+                        </div>
+                        <p class="service-description"><strong>Description:</strong> {{ service.description }}</p>                        <div class="service-actions">
+                            <a href="{% url 'service_request_form' service.id %}" class="btn-outline">Request This Service</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-services">
+                <h3>No services available at the moment</h3>
+                <p>Please check back later for available barangay services.</p>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- My Requests Section -->
+        <section class="requests-section">
+            <div class="section-header">
+                <h3>My Requests</h3>
+                <span class="requests-count">{{ user_requests|length }} Requests</span>
+            </div>
+
+            {% if user_requests %}
+            <div class="requests-list">
+                {% for request in user_requests %}
+                <div class="request-card status-{{ request.status }}">
+                    <div class="request-header">
+                        <h4>{{ request.service_type.name }}</h4>
+                        <span class="request-status">{{ request.get_status_display }}</span>
+                    </div>
+                    <div class="request-body">
+                        <div class="request-meta">
+                            <div class="meta-item">
+                                📅 {{ request.date_requested|date:"M d, Y" }}
+                            </div>
+                            <div class="meta-item">
+                                🎯 {{ request.purpose|truncatewords:10 }}
+                            </div>
+                        </div>
+                        {% if request.admin_notes %}
+                        <div class="admin-notes">
+                            <strong>Admin Notes:</strong> {{ request.admin_notes }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-requests">
+                <h3>You haven't made any requests yet</h3>
+                <p>Browse available services above to make your first request.</p>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Barangay Población Community Portal © 2025</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">Kidapawan City, North Cotabato</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Request - Barangay Admin</title>
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin.css' %}">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <h1>Edit Service Request</h1>
+            <div class="admin-info">
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <div class="nav-container">
+            <a href="{% url 'admin_statistics' %}" class="nav-item">Statistics</a>
+            <a href="{% url 'admin_resident_list' %}" class="nav-item">Residents</a>
+            <a href="{% url 'admin_requests' %}" class="nav-item">Service Requests</a>
+            <a href="{% url 'admin_service_type_list' %}" class="nav-item">Service Types</a>
+            <a href="{% url 'admin_request_create' %}" class="nav-item">Create Request</a>
+            <a href="/" class="nav-item">View Main Site</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Back Button -->
+        <div class="back-nav">
+            <a href="{% url 'admin_request_detail' service_request.id %}" class="btn btn-secondary">← Back to Details</a>
+        </div>
+
+        <div class="form-card">
+            <div class="form-header">
+                <h2>Edit Service Request</h2>
+                <p>Update request details for {{ service_request.resident.get_full_name }}</p>
+                <div class="current-status">
+                    Current Status: <span class="status-badge {{ service_request.status }}">{{ service_request.get_status_display }}</span>
+                </div>
+            </div>
+
+            <!-- Display messages -->
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="POST" class="admin-form">
+                {% csrf_token %}
+                
+                <div class="form-section">
+                    <h3>Basic Information</h3>
+                    
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" name="status">
+                            {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if service_request.status == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="purpose" class="required">Purpose</label>
+                        <textarea id="purpose" name="purpose" required rows="4">{{ service_request.purpose }}</textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Resident Details</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="resident_age">Age</label>
+                            <input type="number" id="resident_age" name="resident_age" 
+                                   value="{{ service_request.resident_age|default:'' }}"
+                                   placeholder="Enter age">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="years_in_residence">Years in Residence</label>
+                            <input type="number" id="years_in_residence" name="years_in_residence" 
+                                   value="{{ service_request.years_in_residence|default:'0' }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="months_in_residence">Months in Residence</label>
+                            <input type="number" id="months_in_residence" name="months_in_residence" 
+                                   value="{{ service_request.months_in_residence|default:'0' }}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="resident_address">Address</label>
+                        <textarea id="resident_address" name="resident_address" rows="3"
+                                  placeholder="Enter complete address">{{ service_request.resident_address|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Community Tax Certificate Details</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="community_tax_cert_no">CTC Number</label>
+                            <input type="text" id="community_tax_cert_no" name="community_tax_cert_no" 
+                                   value="{{ service_request.community_tax_cert_no|default:'' }}"
+                                   placeholder="CTC number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ctc_issued_on">CTC Issued On</label>
+                            <input type="date" id="ctc_issued_on" name="ctc_issued_on" 
+                                   value="{{ service_request.ctc_issued_on|date:'Y-m-d'|default:'' }}">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ctc_issued_at">CTC Issued At</label>
+                            <input type="text" id="ctc_issued_at" name="ctc_issued_at" 
+                                   value="{{ service_request.ctc_issued_at|default:'' }}"
+                                   placeholder="Place of issuance">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="or_number">OR Number</label>
+                            <input type="text" id="or_number" name="or_number" 
+                                   value="{{ service_request.or_number|default:'' }}"
+                                   placeholder="Official receipt number">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Admin Notes</h3>
+                    <div class="form-group">
+                        <label for="admin_notes">Internal Notes</label>
+                        <textarea id="admin_notes" name="admin_notes" rows="4"
+                                  placeholder="Add any internal notes or comments...">{{ service_request.admin_notes|default:'' }}</textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Update Request</button>
+                    <a href="{% url 'admin_request_detail' service_request.id %}" class="btn btn-secondary">Cancel</a>
+                    <a href="{% url 'admin_request_delete' service_request.id %}" class="btn btn-danger">Delete Request</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

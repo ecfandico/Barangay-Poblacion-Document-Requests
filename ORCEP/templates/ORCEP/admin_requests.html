@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Requests - Barangay Admin</title>
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin_request.css' %}">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <h1>Service Requests Management</h1>
+            <div class="admin-info">
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <div class="nav-container">
+            <a href="{% url 'admin_statistics' %}" class="nav-item">Statistics</a>
+            <a href="{% url 'admin_resident_list' %}" class="nav-item">Residents</a>
+            <a href="{% url 'admin_requests' %}" class="nav-item active">Service Requests</a>
+            <a href="{% url 'admin_service_type_list' %}" class="nav-item">Service Types</a>
+            <a href="/" class="nav-item">View Main Site</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_requests }}</div>
+                <div class="stat-label">Total Requests</div>
+            </div>
+            <div class="stat-card pending">
+                <div class="stat-number">{{ pending_requests }}</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card approved">
+                <div class="stat-number">{{ approved_requests }}</div>
+                <div class="stat-label">Approved</div>
+            </div>
+            <div class="stat-card completed">
+                <div class="stat-number">{{ completed_requests }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h3>Filter by Status:</h3>
+            <div class="filter-buttons">
+                <a href="{% url 'admin_requests' %}" class="btn {% if not current_filter %}btn-primary{% endif %}">All</a>
+                <a href="{% url 'admin_requests' %}?status=pending" class="btn {% if current_filter == 'pending' %}btn-primary{% endif %}">Pending</a>
+                <a href="{% url 'admin_requests' %}?status=approved" class="btn {% if current_filter == 'approved' %}btn-primary{% endif %}">Approved</a>
+                <a href="{% url 'admin_requests' %}?status=completed" class="btn {% if current_filter == 'completed' %}btn-primary{% endif %}">Completed</a>
+                <a href="{% url 'admin_requests' %}?status=rejected" class="btn {% if current_filter == 'rejected' %}btn-primary{% endif %}">Rejected</a>
+            </div>
+        </div>
+
+        <!-- Requests Table -->
+        <div class="requests-table-container">
+            {% if service_requests %}
+            <table class="requests-table">
+                <thead>
+                    <tr>
+                        <th>Resident Name</th>
+                        <th>Service Type</th>
+                        <th>Date Requested</th>
+                        <th>Purpose</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in service_requests %}
+                    <tr>
+                        <td>{{ req.resident.get_full_name }}</td>
+                        <td>{{ req.service_type.name }}</td>
+                        <td>{{ req.date_requested|date:"M d, Y" }}</td>
+                        <td>{{ req.purpose|truncatewords:5 }}</td>
+                        <td>
+                            <span class="status-badge {{ req.status }}">{{ req.status|title }}</span>
+                        </td>
+                        <td>
+                            <a href="{% url 'admin_request_detail' req.id %}" class="btn btn-sm">View Details</a>
+                            {% if req.status == 'approved' %}
+                            <a href="{% url 'admin_generate_clearance' req.id %}" class="btn btn-sm btn-primary">Generate Document</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="no-requests">
+                <p>No service requests found.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

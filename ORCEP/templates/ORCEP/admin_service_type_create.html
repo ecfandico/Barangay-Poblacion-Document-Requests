@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Service Type - Barangay Admin</title>
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin.css' %}">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <h1>Create Service Type</h1>
+            <div class="admin-info">
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <div class="nav-container">
+            <a href="{% url 'admin_statistics' %}" class="nav-item">Statistics</a>
+            <a href="{% url 'admin_resident_list' %}" class="nav-item">Residents</a>
+            <a href="{% url 'admin_requests' %}" class="nav-item">Service Requests</a>
+            <a href="{% url 'admin_service_type_list' %}" class="nav-item">Service Types</a>
+            <a href="{% url 'admin_service_type_create' %}" class="nav-item active">Create Service Type</a>
+            <a href="/" class="nav-item">View Main Site</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="back-nav">
+            <a href="{% url 'admin_service_type_list' %}" class="btn btn-secondary">← Back to Service Types</a>
+        </div>
+
+        <div class="form-card">
+            <div class="form-header">
+                <h2>Add New Service Type</h2>
+                <p>Create a new service that residents can request</p>
+            </div>
+
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="POST" class="admin-form">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="name" class="required">Service Name</label>
+                    <input type="text" id="name" name="name" required 
+                           placeholder="e.g., Barangay Clearance, Certificate of Indigency">
+                </div>
+
+                <div class="form-group">
+                    <label for="description" class="required">Description</label>
+                    <textarea id="description" name="description" required rows="3"
+                              placeholder="Describe what this service provides..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="processing_fee" class="required">Processing Fee (₱)</label>
+                        <input type="number" id="processing_fee" name="processing_fee" 
+                               step="0.01" min="0" value="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="processing_days" class="required">Processing Days</label>
+                        <input type="number" id="processing_days" name="processing_days" 
+                               min="1" value="3" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="is_active" name="is_active" checked>
+                        <span class="checkmark"></span>
+                        This service type is active and available to residents
+                    </label>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Create Service Type</button>
+                    <a href="{% url 'admin_service_type_list' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

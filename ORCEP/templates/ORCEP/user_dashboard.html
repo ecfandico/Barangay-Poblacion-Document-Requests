@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard - Barangay Población</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'ORCEP/css/user_dashboard.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>Barangay Población</h1>
+        <p>Kidapawan City Online Request and Community Events Portal</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Barangay Portal</div>
+            <div class="nav-links">
+                <a href="{% url 'services_dashboard' %}">Services</a>
+                <a href="{% url 'user_dashboard' %}" class="active">Dashboard</a>
+                <a href="{% url 'home' %}">About</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h2 class="welcome-subtitle">Manage your service requests and documents</h2>
+        </div>
+
+        <!-- My Requests Section -->
+        <section class="requests-section">
+            <div class="section-header">
+                <h3>My Recent Requests</h3>
+                <a href="{% url 'services_dashboard' %}" class="btn btn-primary">Request New Service</a>
+            </div>
+
+            {% if recent_requests %}
+            <div class="requests-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service Type</th>
+                            <th>Date Requested</th>
+                            <th>Status</th>
+                            <th>Purpose</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in recent_requests %}
+                        <tr>
+                            <td>{{ request.service_type.name }}</td>
+                            <td>{{ request.date_requested|date:"M d, Y" }}</td>
+                            <td>
+                                <span class="status-badge {{ request.status }}">
+                                    {{ request.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ request.purpose|truncatewords:5 }}</td>
+                            <td>
+                                <!-- VIEW DETAILS BUTTON -->
+                                <a href="{% url 'user_request_detail' request.id %}" class="btn btn-sm btn-info">View Details</a>
+                                
+                                <!-- QR CODE BUTTON (only for approved/ready/completed requests) -->
+                                {% if request.status in 'approved,ready,completed' %}
+                                    {% if request.qr_code %}
+                                        <a href="{% url 'user_qr_code' request.id %}" class="btn btn-sm btn-success">
+                                            <i class="fas fa-qrcode"></i> View QR
+                                        </a>
+                                    {% else %}
+                                        <button class="btn btn-sm btn-secondary" disabled>
+                                            QR Pending
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
+                                
+                                <!-- DOWNLOAD BUTTON (only for approved/ready/completed) -->
+                                {% if request.status in 'approved,ready,completed' %}
+                                    <a href="{% url 'generate_clearance' request.id %}" class="btn btn-sm btn-primary">
+                                        Download
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-requests">
+                <p>You haven't made any service requests yet.</p>
+                <a href="{% url 'services_dashboard' %}" class="btn btn-primary">Browse Services</a>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Barangay Población Community Portal © 2025</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">Kidapawan City, North Cotabato</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,380 @@
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8fafc;
+    color: #2d3748;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+/* Navigation */
+.navbar {
+    background: white;
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+}
+
+.logo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.nav-links a {
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: #4a5568;
+    font-weight: 500;
+    transition: color 0.3s;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+}
+
+.nav-links a:hover {
+    color: #667eea;
+    background: #f7fafc;
+}
+
+/* Main Container */
+.container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Form Card */
+.form-card {
+    background: white;
+    padding: 3.5rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    border: 1px solid #e2e8f0;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.form-header h2 {
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.form-header p {
+    color: #718096;
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+/* Messages */
+.messages {
+    margin-bottom: 2rem;
+}
+
+.message {
+    padding: 1.2rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.message.error {
+    background: #fed7d7;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+}
+
+.message.success {
+    background: #c6f6d5;
+    color: #276749;
+    border: 1px solid #9ae6b4;
+}
+
+.message.info {
+    background: #bee3f8;
+    color: #2c5aa0;
+    border: 1px solid #90cdf4;
+}
+
+/* Info Message */
+.info-message {
+    background: linear-gradient(135deg, #fffaf0, #feebc8);
+    border: 1px solid #fbd38d;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-text strong {
+    color: #dd6b20;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+}
+
+.info-text p {
+    color: #744210;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Auth Form */
+.auth-form {
+    margin-bottom: 2.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.8rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 1.05rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    font-family: inherit;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: #fafbff;
+}
+
+/* Required Field Indicator */
+.required::after {
+    content: " *";
+    color: #e53e3e;
+    font-weight: bold;
+}
+
+/* Buttons */
+.btn {
+    padding: 16px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    width: 100%;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a67d8, #6b46c1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-full {
+    width: 100%;
+}
+
+/* Auth Link */
+.auth-link {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.auth-link p {
+    color: #718096;
+    font-size: 1rem;
+}
+
+.auth-link a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.auth-link a:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+/* Quick Links */
+.quick-links {
+    display: flex;
+    justify-content: center;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #718096;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.back-link:hover {
+    color: #667eea;
+    background: #f7fafc;
+    border-color: #e2e8f0;
+    transform: translateY(-1px);
+}
+
+/* Footer */
+.footer {
+    background: #2d3748;
+    color: white;
+    text-align: center;
+    padding: 2.5rem;
+    margin-top: auto;
+}
+
+.footer p {
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header {
+        padding: 2.5rem 0;
+    }
+
+    .header h1 {
+        font-size: 2.2rem;
+    }
+
+    .header p {
+        font-size: 1.1rem;
+    }
+
+    .container {
+        padding: 2rem 1.5rem;
+    }
+
+    .form-card {
+        padding: 2.5rem;
+    }
+
+    .form-header h2 {
+        font-size: 1.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 2rem 0;
+    }
+
+    .header h1 {
+        font-size: 1.8rem;
+    }
+
+    .header p {
+        font-size: 1rem;
+    }
+
+    .container {
+        padding: 1.5rem 1rem;
+    }
+
+    .form-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .form-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .btn {
+        padding: 14px 20px;
+        font-size: 1rem;
+    }
+}
+
+/* Form Validation Styles */
+.form-group input:invalid:not(:focus):not(:placeholder-shown) {
+    border-color: #e53e3e;
+    background: #fed7d7;
+}
+
+.form-group input:valid:not(:focus):not(:placeholder-shown) {
+    border-color: #38a169;
+    background: #f0fff4;
+}

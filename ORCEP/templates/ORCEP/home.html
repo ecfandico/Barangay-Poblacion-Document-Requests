@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Barangay Población</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'ORCEP/css/home.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>Barangay Población</h1>
+        <p>Kidapawan City Online Request and Community Events Portal</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Barangay Portal</div>
+            <div class="nav-links">
+                <a href="{% url 'services_dashboard' %}">Services</a>
+                <a href="{% url 'user_dashboard' %}">Dashboard</a>
+                <a href="{% url 'home' %}"  class="active">About</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}"> Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}"> Login</a>
+                    <a href="{% url 'register' %}"> Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <div class="welcome-content">
+                <h2>Welcome to Barangay Población Portal</h2>
+                <p class="welcome-subtitle">Your online platform for community services and events</p>
+                
+                {% if user.is_authenticated %}
+                    <div class="login-success">
+                        <h3>Login Successful!</h3>
+                        <p>You are now logged into your account and can access all barangay services.</p>
+                        
+                        <div class="user-info-card">
+                            <h4>Your Profile Information</h4>
+                            <div class="user-details">
+                                <div class="detail-item">
+                                    <strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Email:</strong> {{ user.email }}
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Age:</strong> {{ user.residentprofile.age }}
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Gender:</strong> {{ user.residentprofile.get_gender_display }}
+                                </div>
+                                <div class="detail-item">
+                                    <strong>Address:</strong> {{ user.residentprofile.address }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <a href="{% url 'services_dashboard' %}" class="btn btn-primary">Access Services</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="guest-content">
+                        <p>Please login or register to access barangay services and features.</p>
+                        <div class="action-buttons">
+                            <a href="{% url 'login' %}" class="btn btn-primary">Login to Account</a>
+                            <a href="{% url 'register' %}" class="btn btn-secondary">Register Now</a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Messages Display -->
+        {% if messages %}
+        <section class="messages-section">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2>Portal Features</h2>
+            <p class="section-subtitle">Discover what you can do with our online barangay portal</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3>Document Requests</h3>
+                    <p>Request barangay clearance, business permits, and other official documents online. Submit your requirements and track your request status.</p>
+                    <div class="feature-status">
+                        <span class="status-badge login-required">Login Required</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Request Tracking</h3>
+                    <p>Monitor the status of your submitted requests, view history, and receive updates on your application progress.</p>
+                    <div class="feature-status">
+                        <span class="status-badge login-required">Login Required</span>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🏛️</div>
+                    <h3>Online Services</h3>
+                    <p>Access various barangay services from the comfort of your home. Reduce waiting time and process documents efficiently.</p>
+                    <div class="feature-status">
+                        <span class="status-badge login-required">Login Required</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Barangay Población Community Portal © 2025</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">Kidapawan City, North Cotabato</p>
+        <div class="footer-links">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'services_dashboard' %}">Services</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+        </div>
+    </footer>
+</body>
+</html>

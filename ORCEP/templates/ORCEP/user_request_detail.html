@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Details - {{ service_request.service_type.name }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'ORCEP/css/user_dashboard.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'ORCEP/css/user_request_detail.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>Barangay Población</h1>
+        <p>Kidapawan City Online Request and Community Events Portal</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Barangay Portal</div>
+            <div class="nav-links">
+                <a href="{% url 'services_dashboard' %}">Services</a>
+                <a href="{% url 'user_dashboard' %}">Dashboard</a>
+                <a href="{% url 'home' %}">About</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="back-nav">
+            <a href="{% url 'user_dashboard' %}" class="btn btn-secondary">← Back to Dashboard</a>
+        </div>
+
+        <div class="detail-container">
+            <div class="detail-header">
+                <h1>{{ service_request.service_type.name }}</h1>
+                <div class="request-id">Request ID: #{{ service_request.id }}</div>
+                <div class="request-status" style="margin-top: 0.5rem;">
+                    Status: <span class="status-badge {{ service_request.status }}">
+                        {{ service_request.get_status_display }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="detail-content">
+                <!-- Personal Information -->
+                <div class="detail-section">
+                    <h3>Personal Information</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <strong>Full Name</strong>
+                            <div class="value">{{ service_request.resident.get_full_name }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Email</strong>
+                            <div class="value">{{ service_request.resident.email }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Age</strong>
+                            <div class="value">{{ service_request.resident_age|default:"Not specified" }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Address</strong>
+                            <div class="value">{{ service_request.resident_address|default:"Not specified" }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Residence Duration</strong>
+                            <div class="value">{{ service_request.years_in_residence }} years, {{ service_request.months_in_residence }} months</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Request Details -->
+                <div class="detail-section">
+                    <h3>Request Details</h3>
+                    <div class="detail-item">
+                        <strong>Purpose</strong>
+                        <div class="value">{{ service_request.purpose }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Date Requested</strong>
+                        <div class="value">{{ service_request.date_requested|date:"F d, Y H:i" }}</div>
+                    </div>
+                </div>
+
+                <!-- Community Tax Certificate -->
+                <div class="detail-section">
+                    <h3>Community Tax Certificate</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <strong>CTC Number</strong>
+                            <div class="value">{{ service_request.community_tax_cert_no|default:"Not provided" }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Issued On</strong>
+                            <div class="value">{{ service_request.ctc_issued_on|date:"F d, Y"|default:"Not provided" }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Issued At</strong>
+                            <div class="value">{{ service_request.ctc_issued_at|default:"Not provided" }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <strong>OR Number</strong>
+                            <div class="value">{{ service_request.or_number|default:"Not provided" }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Information -->
+                <div class="detail-section">
+                    <h3>Payment Information</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <strong>Processing Fee</strong>
+                            <div class="value">₱{{ service_request.service_type.processing_fee }}</div>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Payment Status</strong>
+                            <div class="value">
+                                {% if service_request.payment_verified %}
+                                    ✅ Verified on {{ service_request.payment_verified_at|date:"M d, Y" }}
+                                {% elif service_request.payment_proof %}
+                                    ⏳ Pending Verification - Uploaded on {{ service_request.payment_date|date:"M d, Y" }}
+                                {% else %}
+                                    No payment proof uploaded
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if service_request.payment_proof %}
+                    <div class="detail-item">
+                        <strong>Payment Proof</strong>
+                        <div class="payment-proof">
+                            <img src="{{ service_request.payment_proof.url }}" alt="Payment Proof">
+                            <a href="{{ service_request.payment_proof.url }}" target="_blank" class="btn btn-sm" style="margin-top: 0.5rem; display: inline-block;">View Full Size</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Admin Notes -->
+                {% if service_request.admin_notes %}
+                <div class="admin-notes">
+                    <strong>Barangay Admin Note</strong>
+                    <p>{{ service_request.admin_notes }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <!-- Show QR code if available -->
+                    {% if service_request.status in 'approved,ready,completed' %}
+                        {% if service_request.qr_code %}
+                            <a href="{% url 'user_qr_code' service_request.id %}" class="btn btn-success">
+                                iew QR Code
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'generate_clearance' service_request.id %}" class="btn btn-primary">
+                            Download Document
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'user_dashboard' %}" class="btn btn-secondary">
+                        ← Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Barangay Población Community Portal © 2025</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">Kidapawan City, North Cotabato</p>
+    </footer>
+</body>
+</html>

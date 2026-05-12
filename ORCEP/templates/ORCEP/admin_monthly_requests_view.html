@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ month_name }} {{ year }} Requests - Barangay Admin</title>
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin_statistics.css' %}">
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin_monthly_requests_view.css' %}">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <h1>Service Requests - {{ month_name }} {{ year }}</h1>
+            <div class="admin-info">
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <div class="nav-container">
+            <a href="{% url 'admin_statistics' %}" class="nav-item active">Statistics</a>
+            <a href="{% url 'admin_resident_list' %}" class="nav-item">Residents</a>
+            <a href="{% url 'admin_requests' %}" class="nav-item">Service Requests</a>
+            <a href="{% url 'admin_service_type_list' %}" class="nav-item">Service Types</a>
+            <a href="/" class="nav-item">View Main Site</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="back-nav">
+            <a href="{% url 'admin_statistics' %}" class="btn btn-secondary">← Back to Statistics</a>
+            <a href="{% url 'admin_monthly_report_pdf' year month %}" class="btn btn-success" style="float: right;">
+                Download PDF Report
+            </a>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <div class="summary-number">{{ total_requests }}</div>
+                <div class="summary-label">Total Requests</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number">{{ approved_requests }}</div>
+                <div class="summary-label">Approved</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number">{{ completed_requests }}</div>
+                <div class="summary-label">Completed</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number">{{ pending_requests }}</div>
+                <div class="summary-label">Pending</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number">{{ rejected_requests }}</div>
+                <div class="summary-label">Rejected</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number revenue">₱{{ total_revenue|floatformat:2 }}</div>
+                <div class="summary-label">Total Revenue</div>
+            </div>
+        </div>
+
+        <!-- Requests Table -->
+        <div class="requests-table">
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="background: #34495e; color: #ffffff;">ID</th>
+                            <th style="background: #34495e; color: #ffffff;">Resident</th>
+                            <th style="background: #34495e; color: #ffffff;">Service Type</th>
+                            <th style="background: #34495e; color: #ffffff;">Date Requested</th>
+                            <th style="background: #34495e; color: #ffffff;">Status</th>
+                            <th style="background: #34495e; color: #ffffff;">Purpose</th>
+                            <th style="background: #34495e; color: #ffffff;">Payment</th>
+                            <th style="background: #34495e; color: #ffffff;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requests %}
+                        <tr>
+                            <td>#{{ req.id }}</td>
+                            <td>{{ req.resident.get_full_name }}</td>
+                            <td>{{ req.service_type.name }}</td>
+                            <td>{{ req.date_requested|date:"M d, Y H:i" }}</td>
+                            <td>
+                                <span class="status-badge {{ req.status }}">
+                                    {{ req.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ req.purpose|truncatewords:10 }}</td>
+                            <td>
+                                {% if req.payment_verified %}
+                                    Verified
+                                {% elif req.payment_proof %}
+                                    Pending
+                                {% else %}
+                                    Not Paid
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'admin_request_detail' req.id %}" class="btn-sm btn-info">View</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 2rem;">
+                                No service requests found for this month.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

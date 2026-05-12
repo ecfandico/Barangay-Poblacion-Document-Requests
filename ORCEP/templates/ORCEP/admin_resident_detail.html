@@ -1,0 +1,231 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resident Details - Barangay Admin</title>
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin.css' %}">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <h1>Resident Details</h1>
+            <div class="admin-info">
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <div class="nav-container">
+            <a href="{% url 'admin_statistics' %}" class="nav-item">Statistics</a>
+            <a href="{% url 'admin_resident_list' %}" class="nav-item">Residents</a>
+            <a href="{% url 'admin_requests' %}" class="nav-item">Service Requests</a>
+            <a href="{% url 'admin_service_type_list' %}" class="nav-item">Service Types</a>
+            <a href="/" class="nav-item">View Main Site</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Back Button -->
+        <div class="back-nav">
+            <a href="{% url 'admin_resident_list' %}" class="btn btn-secondary">← Back to Residents</a>
+        </div>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Resident Profile Card -->
+        <div class="resident-profile-card">
+            <div class="profile-header">
+                <div class="profile-info">
+                    <h2>{{ resident_user.get_full_name }}</h2>
+                    <p class="profile-email">{{ resident_user.email }}</p>
+                    <div class="profile-meta">
+                        <span class="meta-item">User ID: {{ resident_user.id }}</span>
+                        <span class="meta-item">Joined: {{ resident_user.date_joined|date:"F d, Y" }}</span>
+                    </div>
+                </div>
+                
+                <div class="verification-status">
+                    <h3>Verification Status</h3>
+                    {% if resident_profile.verification_status == 'approved' %}
+                        <div class="status-display approved">
+                            <span class="status-icon">✅</span>
+                            <span class="status-text">APPROVED</span>
+                        </div>
+                        <p class="verification-details">
+                            Verified by: {{ resident_profile.verified_by.get_full_name|default:"Admin" }}<br>
+                            On: {{ resident_profile.verified_at|date:"F d, Y H:i" }}
+                        </p>
+                    {% elif resident_profile.verification_status == 'rejected' %}
+                        <div class="status-display rejected">
+                            <span class="status-icon">❌</span>
+                            <span class="status-text">REJECTED</span>
+                        </div>
+                        <p class="verification-details">
+                            By: {{ resident_profile.verified_by.get_full_name|default:"Admin" }}<br>
+                            On: {{ resident_profile.verified_at|date:"F d, Y H:i" }}
+                        </p>
+                    {% else %}
+                        <div class="status-display pending">
+                            <span class="status-icon">⏳</span>
+                            <span class="status-text">PENDING REVIEW</span>
+                        </div>
+                        <p class="verification-details">Awaiting verification</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Verification Actions -->
+            <div class="verification-actions">
+                <h3>Verification Actions</h3>
+                <form method="POST" class="verification-form">
+                    {% csrf_token %}
+                    
+                    <div class="action-buttons">
+                        <button type="submit" name="action" value="verify" 
+                                class="btn btn-success" {% if resident_profile.verification_status == 'approved' %}disabled{% endif %}>
+                            Approve Resident
+                        </button>
+                        
+                        <button type="submit" name="action" value="reject" 
+                                class="btn btn-danger" {% if resident_profile.verification_status == 'rejected' %}disabled{% endif %}>
+                            Reject Resident
+                        </button>
+                        
+                        <button type="submit" name="action" value="pending" 
+                                class="btn btn-warning" {% if resident_profile.verification_status == 'pending' %}disabled{% endif %}>
+                            Set to Pending
+                        </button>
+                    </div>
+                    
+                    <!-- Rejection Reason (shown when rejecting) -->
+                    <div class="rejection-reason" id="rejectionReason" style="display: none;">
+                        <label for="rejection_reason">Reason for Rejection:</label>
+                        <textarea id="rejection_reason" name="rejection_reason" 
+                                  rows="3" placeholder="Enter reason for rejection..."></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Resident Details -->
+            <div class="resident-details-grid">
+                <!-- Personal Information -->
+                <div class="detail-section">
+                    <h3>Personal Information</h3>
+                    <div class="detail-item">
+                        <strong>Full Name:</strong> {{ resident_user.get_full_name }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Email:</strong> {{ resident_user.email }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Username:</strong> {{ resident_user.username }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Age:</strong> {{ resident_profile.age|default:"Not specified" }}
+                    </div>
+                    <div class="detail-item">
+                        <strong>Gender:</strong> {{ resident_profile.get_gender_display|default:"Not specified" }}
+                    </div>
+                </div>
+
+                <!-- Address Information -->
+                <div class="detail-section">
+                    <h3>Address Information</h3>
+                    <div class="detail-item">
+                        <strong>Address:</strong>
+                        <div class="address-content">
+                            {{ resident_profile.address|default:"Not provided"|linebreaks }}
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Date Registered:</strong> {{ resident_profile.date_registered|date:"F d, Y H:i" }}
+                    </div>
+                </div>
+
+                <!-- ID Verification -->
+                <div class="detail-section">
+                    <h3>ID Verification</h3>
+                    <div class="detail-item">
+                        <strong>ID Photo:</strong>
+                        {% if resident_profile.id_photo %}
+                            <div class="id-photo-container">
+                                <img src="{{ resident_profile.id_photo.url }}" alt="ID Photo" class="id-photo">
+                                <a href="{{ resident_profile.id_photo.url }}" target="_blank" class="btn btn-sm">View Full Size</a>
+                            </div>
+                        {% else %}
+                            <span class="no-photo">No ID photo uploaded</span>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Verification Notes Form -->
+                    <form method="POST" class="notes-form">
+                        {% csrf_token %}
+                        <div class="detail-item">
+                            <strong>Verification Notes:</strong>
+                            <textarea name="verification_notes" rows="4"
+                                      placeholder="Add notes about this resident's verification...">{{ resident_profile.verification_notes }}</textarea>
+                            <button type="submit" name="action" value="update_notes" class="btn btn-sm btn-primary">
+                                Update Notes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Service Request History -->
+            <div class="service-requests-section">
+                <h3>Service Request History</h3>
+                {% if service_requests %}
+                <div class="requests-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Service Type</th>
+                                <th>Date Requested</th>
+                                <th>Status</th>
+                                <th>Purpose</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in service_requests %}
+                            <tr>
+                                <td>{{ request.service_type.name }}</td>
+                                <td>{{ request.date_requested|date:"M d, Y" }}</td>
+                                <td>
+                                    <span class="status-badge {{ request.status }}">
+                                        {{ request.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ request.purpose|truncatewords:5 }}</td>
+                                <td>
+                                    <a href="{% url 'admin_request_detail' request.id %}" class="btn btn-sm">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="no-requests">This resident has not submitted any service requests yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+<script src="{% static 'ORCEP/js/admin_resident_detail.js' %}"></script>
+</body>
+</html>

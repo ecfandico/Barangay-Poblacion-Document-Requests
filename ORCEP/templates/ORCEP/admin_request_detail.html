@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Details - Barangay Admin</title>
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin.css' %}">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <h1>Service Request Details</h1>
+            <div class="admin-info">
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <div class="nav-container">
+            <a href="{% url 'admin_statistics' %}" class="nav-item">Statistics</a>
+            <a href="{% url 'admin_resident_list' %}" class="nav-item">Residents</a>
+            <a href="{% url 'admin_requests' %}" class="nav-item">Service Requests</a>
+            <a href="{% url 'admin_service_type_list' %}" class="nav-item">Service Types</a>
+            <a href="{% url 'admin_request_create' %}" class="nav-item">Create Request</a>
+            <a href="/" class="nav-item">View Main Site</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Back Button -->
+        <div class="back-nav">
+            <a href="{% url 'admin_requests' %}" class="btn btn-secondary">← Back to Requests</a>
+        </div>
+
+        <!-- Request Details Card -->
+        <div class="detail-card">
+            <div class="detail-header">
+                <h2>{{ service_request.service_type.name }}</h2>
+                <span class="status-badge {{ service_request.status }}">{{ service_request.get_status_display }}</span>
+            </div>
+
+            <div class="detail-grid">
+                <!-- Resident Information -->
+                <div class="detail-section">
+                    <h3>Resident Information</h3>
+                    <div class="detail-row">
+                        <strong>Name:</strong> {{ service_request.resident.get_full_name }}
+                    </div>
+                    <div class="detail-row">
+                        <strong>Email:</strong> {{ service_request.resident.email }}
+                    </div>
+                    <div class="detail-row">
+                        <strong>Age:</strong> {{ service_request.resident_age|default:"Not specified" }}
+                    </div>
+                    <div class="detail-row">
+                        <strong>Address:</strong> {{ service_request.resident_address|default:"Not specified" }}
+                    </div>
+                    <div class="detail-row">
+                        <strong>Residence Duration:</strong> 
+                        {{ service_request.years_in_residence }} years, {{ service_request.months_in_residence }} months
+                    </div>
+                </div>
+
+                <!-- Request Details -->
+                <div class="detail-section">
+                    <h3>Request Details</h3>
+                    <div class="detail-row">
+                        <strong>Purpose:</strong> {{ service_request.purpose }}
+                    </div>
+                    <div class="detail-row">
+                        <strong>Date Requested:</strong> {{ service_request.date_requested|date:"F d, Y H:i" }}
+                    </div>
+                    <div class="detail-row">
+                        <strong>Service Type:</strong> {{ service_request.service_type.name }}
+                    </div>
+                </div>
+
+                <!-- CTC Information -->
+                <div class="detail-section">
+                    <h3>Community Tax Certificate</h3>
+                    <div class="detail-row">
+                        <strong>CTC Number:</strong> {{ service_request.community_tax_cert_no|default:"Not provided" }}
+                    </div>
+                    <div class="detail-row">
+                        <strong>Issued On:</strong> {{ service_request.ctc_issued_on|default:"Not provided" }}
+                    </div>
+                    <div class="detail-row">
+                        <strong>Issued At:</strong> {{ service_request.ctc_issued_at|default:"Not provided" }}
+                    </div>
+                    <div class="detail-row">
+                        <strong>OR Number:</strong> {{ service_request.or_number|default:"Not provided" }}
+                    </div>
+                </div>
+
+                <!-- Admin Section -->
+                <div class="detail-section">
+                    <h3>Admin Information</h3>
+                    <div class="detail-row">
+                        <strong>Admin Notes:</strong> 
+                        {{ service_request.admin_notes|default:"No notes added" }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add this section -->
+            <!-- Payment Information Section -->
+            <div class="detail-section">
+                <h3>Payment Information</h3>
+                <div class="detail-row">
+                    <strong>Processing Fee:</strong> ₱{{ service_request.service_type.processing_fee }}
+                </div>
+                <div class="detail-row">
+                    <strong>Payment Status:</strong>
+                    {% if service_request.payment_verified %}
+                        <span class="verified-badge" style="background: #d4edda; color: #155724; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">
+                            Verified
+                        </span>
+                    {% elif service_request.payment_proof %}
+                        <span class="pending-badge" style="background: #fff3cd; color: #856404; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">
+                            Pending Verification
+                        </span>
+                    {% else %}
+                        <span class="no-payment" style="color: #721c24;">No payment proof</span>
+                    {% endif %}
+                </div>
+    
+                {% if service_request.payment_proof %}
+                <div class="detail-row">
+                    <strong>Payment Proof:</strong>
+                    <div style="margin-top: 0.5rem;">
+                        <!-- FIXED IMAGE URL -->
+                        {% if service_request.payment_proof.url %}
+                            <img src="{{ request.scheme }}://{{ request.get_host }}{{ service_request.payment_proof.url }}" 
+                            alt="Payment Proof" 
+                            style="max-width: 300px; max-height: 300px; border: 1px solid #ddd; border-radius: 4px; padding: 5px; background: white;">
+                        {% else %}
+                            <p style="color: #666;">Image path: {{ service_request.payment_proof }}</p>
+                        {% endif %}
+                        
+                        <div style="margin-top: 0.5rem;">
+                            <a href="{{ service_request.payment_proof.url }}" 
+                               target="_blank" 
+                               class="btn btn-sm" 
+                               style="background: #f8f9fa; border: 1px solid #ddd; padding: 0.25rem 0.5rem; text-decoration: none; color: #333; border-radius: 4px;">
+                                🔍 View Full Image
+                            </a>
+                            
+                            {% if not service_request.payment_verified %}
+                            <button class="btn btn-sm btn-success verify-payment-btn" 
+                                    data-request-id="{{ service_request.id }}"
+                                    style="background: #28a745; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 4px; cursor: pointer;">
+                                ✅ Verify Payment
+                            </button>
+                            {% else %}
+                            <span style="margin-left: 1rem; color: #666; font-size: 0.875rem;">
+                                Verified by: {{ service_request.payment_verified_by.get_full_name|default:"Admin" }}
+                                on {{ service_request.payment_verified_at|date:"M d, Y" }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{% url 'admin_request_update' service_request.id %}" class="btn btn-primary">Edit Request</a>
+                    
+                    {% if service_request.status == 'approved' %}
+                    <a href="{% url 'generate_qr_code' service_request.id %}" class="btn btn-info">Generate QR Code</a>
+                    <a href="{% url 'admin_generate_clearance' service_request.id %}" class="btn btn-success">Generate Document</a>
+                    {% endif %}  
+                    <a href="{% url 'admin_request_delete' service_request.id %}" class="btn btn-danger">Delete Request</a>
+            </div>
+        </div>
+
+        <!-- Quick Status Update -->
+        <div class="quick-actions">
+            <h3>Quick Status Update</h3>
+            <form method="POST" action="{% url 'admin_request_detail' service_request.id %}">
+                {% csrf_token %}
+                <div class="status-buttons">
+                    <button type="submit" name="status" value="pending" class="btn btn-warning">Pending</button>
+                    <button type="submit" name="status" value="approved" class="btn btn-success">Approve</button>
+                    <button type="submit" name="status" value="rejected" class="btn btn-danger">Reject</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script src="{% static 'ORCEP/javascript/admin_request_detail.js' %}"></script>
+</html>

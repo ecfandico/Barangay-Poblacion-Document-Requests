@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator - Barangay Admin</title>
+    <link rel="stylesheet" href="{% static 'ORCEP/css/admin.css' %}">
+</head>
+<body>
+    <header class="admin-header">
+        <div class="header-content">
+            <h1>QR Code Generator</h1>
+            <div class="admin-info">
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="admin-nav">
+        <div class="nav-container">
+            <a href="{% url 'admin_statistics' %}" class="nav-item">Statistics</a>
+            <a href="{% url 'admin_resident_list' %}" class="nav-item">Residents</a>
+            <a href="{% url 'admin_requests' %}" class="nav-item">Service Requests</a>
+            <a href="{% url 'admin_service_type_list' %}" class="nav-item">Service Types</a>
+            <a href="{% url 'admin_request_create' %}" class="nav-item">Create Request</a>
+            <a href="/" class="nav-item">View Main Site</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="back-nav">
+            <a href="{% url 'admin_request_detail' service_request.id %}" class="btn btn-secondary">← Back to Request Details</a>
+        </div>
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="qr-container">
+            <div class="qr-card">
+                <div class="qr-header">
+                    <h2>Document Verification QR Code</h2>
+                    <p>Scan this QR code to verify and download the document</p>
+                </div>
+
+                <div class="qr-content">
+                    <!-- QR Code Display -->
+                    <div class="qr-code-display">
+                        {% if service_request.qr_code %}
+                            <img src="{{ service_request.qr_code.url }}" alt="QR Code" class="qr-image">
+                        {% else %}
+                            <div class="no-qr">
+                                <p>QR Code not generated yet.</p>
+                                <a href="{% url 'generate_qr_code' service_request.id %}" class="btn btn-primary">
+                                    Generate QR Code
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Request Details -->
+                    <div class="qr-details">
+                        <h3>Request Information</h3>
+                        <div class="detail-item">
+                            <strong>Resident:</strong> {{ service_request.resident.get_full_name }}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Service Type:</strong> {{ service_request.service_type.name }}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Status:</strong> 
+                            <span class="status-badge {{ service_request.status }}">
+                                {{ service_request.get_status_display }}
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Verification URL:</strong>
+                            <div class="verification-url">
+                                <code>http://10.0.0.19:8000{{ verification_url }}</code>
+                                <button onclick="copyToClipboard('http://10.0.0.19:8000{{ verification_url }}')" 
+                                        class="btn btn-sm copy-btn">
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Token Expires:</strong> 
+                            {{ service_request.token_expiry|date:"F d, Y"|default:"Not set" }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="qr-actions">
+                    {% if service_request.qr_code %}
+                        <a href="{{ service_request.qr_code.url }}" download class="btn btn-primary">
+                            Download QR Code
+                        </a>
+                        <a href="{% url 'email_qr_code' service_request.id %}" class="btn btn-success">
+                            Send QR Code via Email
+                        </a>
+                        <a href="{% url 'admin_generate_clearance' service_request.id %}" class="btn btn-secondary">
+                            View Document
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'admin_request_detail' service_request.id %}" class="btn">
+                        Back to Request
+                    </a>
+                </div>
+            </div>
+
+            <!-- Instructions -->
+            <div class="instructions">
+                <h3>How to Use QR Code:</h3>
+                <ol>
+                    <li>Download the QR code image</li>
+                    <li>Send it to the resident via email or messaging app</li>
+                    <li>The resident can scan the QR code with their phone camera</li>
+                    <li>They will be taken to a verification page</li>
+                    <li>After verification, they can download their document</li>
+                </ol>
+                
+                <div class="note">
+                    <strong>Note:</strong> The QR code contains a unique verification token that expires in 30 days.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('URL copied to clipboard!');
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
