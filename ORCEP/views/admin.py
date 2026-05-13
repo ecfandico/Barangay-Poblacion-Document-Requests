@@ -375,7 +375,7 @@ def generate_qr_code(request, request_id):
         )
         
         # Get the verification URL - USING CORRECT IP
-        verification_url = f"http://10.13.68.235:8000{service_request.get_verification_url()}"
+        verification_url = f"https://ecfandico.pythonanywhere.com{service_request.get_verification_url()}"
         
         qr.add_data(verification_url)
         qr.make(fit=True)
@@ -395,7 +395,7 @@ def generate_qr_code(request, request_id):
     context = {
         'service_request': service_request,
         'verification_url': service_request.get_verification_url(),
-        'full_verification_url': f"http://10.13.68.235:8000{service_request.get_verification_url()}",  # FIXED
+        'full_verification_url': f"https://ecfandico.pythonanywhere.com{service_request.get_verification_url()}",
     }
     return render(request, 'ORCEP/admin_qr_code.html', context)
 
